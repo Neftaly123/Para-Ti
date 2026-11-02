@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Para Tí, mi niña hermosa ❤️🌷</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            poppins: ['Poppins', 'sans-serif'],
+            playfair: ['Playfair Display', 'serif'],
+            dancing: ['Dancing Script', 'cursive'],
+          },
+          colors: {
+            romantic: {
+              50: '#fff0f3',
+              100: '#ffe3e8',
+              200: '#ffccd5',
+              300: '#ffb3c1',
+              400: '#ff758f',
+              500: '#ff4d6d',
+              600: '#c9184a',
+              700: '#a4133c',
+              800: '#800f2f',
+              900: '#590d22',
+            },
+            gold: {
+              light: '#fdf6e2',
+              accent: '#d4af37',
+              dark: '#9a7b1c',
+            }
+          },
+          keyframes: {
+            heartbeat: {
+              '0%, 100%': { transform: 'scale(1)' },
+              '14%': { transform: 'scale(1.15)' },
+              '28%': { transform: 'scale(1)' },
+              '42%': { transform: 'scale(1.2)' },
+              '70%': { transform: 'scale(1)' },
+            },
+            pulseGlow: {
+              '0%, 100%': { 
+                boxShadow: '0 0 20px rgba(255, 77, 109, 0.45), 0 0 40px rgba(255, 77, 109, 0.25)',
+                transform: 'scale(1)'
+              },
+              '50%': { 
+                boxShadow: '0 0 35px rgba(255, 77, 109, 0.75), 0 0 60px rgba(255, 77, 109, 0.4)',
+                transform: 'scale(1.02)'
+              },
+            },
+            floatSlow: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
+            }
+          },
+          animation: {
+            heartbeat: 'heartbeat 1.6s ease-in-out infinite',
+            'pulse-glow': 'pulseGlow 2.2s infinite',
+            float: 'floatSlow 4s ease-in-out infinite',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: linear-gradient(135deg, #fff0f3 0%, #ffe5ec 50%, #ffccd5 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Ambient floating hearts canvas */
+    #hearts-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Romantic paper styling */
+    .letter-paper {
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 20px 45px -10px rgba(201, 24, 74, 0.16),
+                  0 0 0 1px rgba(255, 255, 255, 0.9),
+                  inset 0 0 40px rgba(255, 227, 232, 0.35);
+      position: relative;
+    }
+
+    /* Elegant inner dotted border */
+    .letter-paper::before {
+      content: '';
+      position: absolute;
+      inset: 10px;
+      border: 1px dashed rgba(255, 117, 143, 0.45);
+      border-radius: 1.25rem;
+      pointer-events: none;
+    }
+
+    /* Wax seal button */
+    .wax-seal {
+      background: radial-gradient(circle at 35% 35%, #ff4d6d 0%, #c9184a 55%, #800f2f 100%);
+      box-shadow: 0 8px 20px rgba(164, 19, 60, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+    }
+
+    /* Polaroid photo styling */
+    .polaroid-frame {
+      background: #ffffff;
+      box-shadow: 0 16px 36px -8px rgba(164, 19, 60, 0.22), 0 4px 12px rgba(0, 0, 0, 0.04);
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .polaroid-frame:hover {
+      transform: scale(1.03) rotate(0deg) !important;
+      box-shadow: 0 24px 45px -6px rgba(164, 19, 60, 0.3);
+    }
+
+    .tape {
+      background: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      backdrop-filter: blur(2px);
+      transform: rotate(-2.5deg);
+    }
+
+    /* Text gradient */
+    .romantic-text-gradient {
+      background: linear-gradient(135deg, #a4133c 0%, #ff4d6d 50%, #c9184a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Smooth evasion styling for 'No' */
+    #btn-no {
+      transition: left 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2), 
+                  top 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2),
+                  transform 0.15s ease-out;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    /* Cursor sparkles */
+    .cursor-sparkle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      animation: sparkleFade 0.7s forwards ease-out;
+    }
+    @keyframes sparkleFade {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: translate(-50%, -100%) scale(0.3) rotate(45deg); }
+    }
+  </style>
+</head>
+<body class="relative flex flex-col items-center justify-between min-h-screen text-slate-700 selection:bg-pink-300 selection:text-pink-900 pb-12">
+
+  <!-- Ambient background floating hearts canvas -->
+  <canvas id="hearts-canvas"></canvas>
+
+  <!-- Top Floating Controls (Music + Photo Selector) -->
+  <aside class="fixed top-3 right-3 sm:top-4 sm:right-4 z-40 flex items-center gap-2">
+    <!-- Music Player Toggle -->
+    <button id="music-toggle-btn" 
+            onclick="toggleAudio()" 
+            class="flex items-center gap-2 bg-white/90 backdrop-blur-md px-3.5 py-2 rounded-full border border-pink-200 shadow-md hover:shadow-lg hover:border-pink-300 transition-all text-xs sm:text-sm font-medium text-pink-700 active:scale-95 cursor-pointer"
+            title="Música de fondo"
+            aria-label="Reproducir o pausar melodía">
+      <span id="music-indicator" class="relative flex items-center justify-center w-5 h-5 rounded-full bg-pink-100 text-pink-600">
+        <i id="music-icon" class="fa-solid fa-music text-xs"></i>
+      </span>
+      <span id="music-status-text" class="hidden sm:inline">Música romántica</span>
+    </button>
+  </aside>
+
+  <aside class="fixed top-3 left-3 sm:top-4 sm:left-4 z-40">
+    <!-- Photo customization button -->
+    <label for="photo-file-input" 
+           class="flex items-center gap-1.5 bg-white/85 backdrop-blur-md px-3 py-2 rounded-full border border-pink-200 shadow-sm hover:shadow text-xs font-medium text-slate-600 hover:text-pink-600 cursor-pointer transition-all active:scale-95">
+      <i class="fa-solid fa-camera text-romantic-500"></i>
+      <span class="hidden sm:inline">Cambiar foto</span>
+      <input type="file" id="photo-file-input" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+    </label>
+  </aside>
+
+  <!-- Audio Element (supports custom local 'musica.mp3' or fallback synthesizer) -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="musica.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- MAIN WRAPPER -->
+  <main class="relative z-10 w-full max-w-2xl px-4 pt-12 sm:pt-16 mx-auto flex flex-col items-center">
+
+    <!-- Top Badge -->
+    <header class="text-center mb-6">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-pink-200 text-xs sm:text-sm font-medium text-pink-600 shadow-sm">
+        <span class="animate-heartbeat inline-block">❤️</span>
+        <span>Un mensaje especial para alguien inolvidable</span>
+        <span class="animate-heartbeat inline-block">❤️</span>
+      </div>
+    </header>
+
+    <!-- 1. SECCIÓN DE BIENVENIDA / CARTA ROMÁNTICA -->
+    <article class="letter-paper w-full rounded-3xl p-6 sm:p-10 mb-10 transition-all duration-300">
+      
+      <!-- Wax seal ornament at top -->
+      <div class="flex justify-center -mt-12 sm:-mt-16 mb-5">
+        <div class="wax-seal w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-white shadow-xl transform hover:rotate-12 transition-transform duration-300 border-2 border-white/80 cursor-default">
+          <i class="fa-solid fa-heart text-2xl drop-shadow"></i>
+        </div>
+      </div>
+
+      <!-- Letter Content (Exact required text and emojis) -->
+      <div class="space-y-5 text-slate-700 text-base sm:text-lg leading-relaxed font-normal">
+
+        <!-- Title -->
+        <h1 class="font-playfair text-2xl sm:text-3xl md:text-4xl font-bold text-center text-romantic-700 tracking-wide pt-1 pb-3 border-b border-pink-100 flex items-center justify-center gap-2 flex-wrap">
+          Para Tí, mi niña hermosa ❤️🌷
+        </h1>
+
+        <!-- Paragraph 1 -->
+        <p class="pt-2 text-justify sm:text-left text-slate-700/90 leading-relaxed">
+          No sé en qué momento te volviste alguien tan especial para mí, pero poco a poco te fuiste ganando un lugar en mi corazón. 🥹❤️
+        </p>
+
+        <!-- Paragraph 2 -->
+        <p class="text-justify sm:text-left text-slate-700/90 leading-relaxed">
+          Me gusta tu forma de ser, tu sonrisa y esa manera tan bonita que tenés de hacer que mis días sean mejores, incluso sin darte cuenta.
+        </p>
+
+        <!-- Paragraph 3 -->
+        <p class="text-justify sm:text-left text-slate-700/90 leading-relaxed">
+          No te prometo una historia perfecta, pero sí quiero ofrecerte algo sincero: mis ganas de conocerte cada día más, de apoyarte cuando las cosas no vayan bien, de celebrar tus alegrías y de recordarte lo mucho que valés.
+        </p>
+
+        <!-- Paragraph 4 -->
+        <p class="text-justify sm:text-left text-slate-700/90 leading-relaxed">
+          Quiero ser esa persona con la que podás reír sin motivos, hablar de cualquier cosa y sentirte segura de ser tu misma.
+        </p>
+
+        <!-- Paragraph 5 -->
+        <p class="text-justify sm:text-left text-slate-700/90 leading-relaxed">
+          Y si algo tengo claro, es que no quiero quedarme con las ganas de descubrir todo lo bonito que podríamos vivir juntos. ❤️
+        </p>
+
+        <!-- Paragraph 6 -->
+        <p class="text-justify sm:text-left text-slate-700/90 leading-relaxed">
+          Porque entre tantas personas en este mundo, mi corazón encontró en vos a alguien con quien quisiera intentarlo de verdad. 🌹
+        </p>
+
+        <!-- Paragraph 7 -->
+        <p class="font-medium text-romantic-600 italic text-center sm:text-left text-lg pt-2">
+          Y ahora quiero hacerte una pregunta que llevo en mi corazón… 🥹❤️
+        </p>
+
+      </div>
+
+      <!-- Golden Heart Flourish Divider -->
+      <div class="flex items-center justify-center gap-3 my-7 text-pink-300">
+        <div class="h-px bg-gradient-to-r from-transparent via-pink-300 to-transparent w-24 sm:w-32"></div>
+        <i class="fa-solid fa-sparkles text-pink-400 text-sm"></i>
+        <i class="fa-solid fa-heart text-romantic-500 text-lg animate-heartbeat"></i>
+        <i class="fa-solid fa-sparkles text-pink-400 text-sm"></i>
+        <div class="h-px bg-gradient-to-r from-transparent via-pink-300 to-transparent w-24 sm:w-32"></div>
+      </div>
+
+      <!-- 2. SECCIÓN DE LA FOTO Y LA PREGUNTA FINAL -->
+      <section class="flex flex-col items-center mt-6">
+
+        <!-- Polaroid Photo Container with Tilt -->
+        <div class="relative group cursor-pointer" onclick="document.getElementById('photo-file-input').click()" title="Haz clic para cambiar la foto">
+          <!-- Tape effect at top -->
+          <div class="tape absolute -top-3 left-1/2 -translate-x-1/2 w-28 h-6 rounded-sm z-20 opacity-80"></div>
+          
+          <div class="polaroid-frame p-3.5 pb-6 rounded-2xl bg-white rotate-[-1.5deg] border border-pink-100 flex flex-col items-center">
+            
+            <!-- Photo Frame -->
+            <div class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-xl overflow-hidden bg-pink-50 shadow-inner flex items-center justify-center">
+              <img id="special-photo" 
+                   src="foto-placeholder.svg" 
+                   alt="Nosotros dos ❤️" 
+                   class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+
+              <!-- Photo change overlay hint on hover -->
+              <div class="absolute inset-0 bg-romantic-900/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white text-sm font-medium">
+                <i class="fa-solid fa-camera-retro text-2xl mb-1 text-white drop-shadow"></i>
+                <span class="drop-shadow">Toca para poner nuestra foto</span>
+              </div>
+            </div>
+
+            <!-- Polaroid handwritten caption -->
+            <div class="pt-4 text-center">
+              <p class="font-dancing text-2xl sm:text-3xl text-romantic-700 tracking-wide font-bold">
+                Tú y Yo ✨❤️
+              </p>
+              <p class="text-[11px] text-pink-400 font-light mt-0.5 tracking-wider uppercase">
+                Un momento para siempre
+              </p>
+            </div>
+          </div>
+
+          <!-- Sparkle icon -->
+          <div class="absolute -top-1 -right-2 text-yellow-400 drop-shadow text-xl transform rotate-12 pointer-events-none">
+            ✨
+          </div>
+        </div>
+
+        <!-- Pregunta Final en Grande -->
+        <div class="mt-9 text-center px-2">
+          <p class="text-xs uppercase tracking-widest text-pink-500 font-semibold mb-2">Con toda la sinceridad de mi alma...</p>
+          <h2 id="proposal-question" class="font-playfair text-3xl sm:text-4xl md:text-5xl font-extrabold romantic-text-gradient tracking-tight leading-tight drop-shadow-sm py-2">
+            ¿Puedo ser tu novio? 🥺❤️
+          </h2>
+        </div>
+
+        <!-- 3. BOTONES DE RESPUESTA ("Sí" y "No") -->
+        <div id="buttons-area" class="relative w-full max-w-md min-h-[140px] mt-6 flex items-center justify-center">
+
+          <!-- Botón de "¡Sí! 🥰" -->
+          <button id="btn-yes" 
+                  onclick="celebrateAcceptance()"
+                  class="z-20 relative px-8 sm:px-11 py-3.5 sm:py-4 rounded-full font-bold text-white text-lg sm:text-xl shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300 flex items-center gap-3 overflow-hidden animate-pulse-glow"
+                  style="background: linear-gradient(135deg, #ff4d6d 0%, #e63946 50%, #c9184a 100%);">
+            <!-- Shimmer beam effect -->
+            <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none"></span>
+            <i class="fa-solid fa-heart animate-heartbeat text-white text-xl"></i>
+            <span class="tracking-wide">¡Sí! 🥰</span>
+            <i class="fa-solid fa-sparkles text-yellow-200 text-sm"></i>
+          </button>
+
+          <!-- Botón de "No 🙈" (Evasivo, inteligente y divertido) -->
+          <button id="btn-no" 
+                  class="z-10 absolute px-6 py-2.5 rounded-full font-medium text-slate-500 bg-white/95 border border-pink-200 text-sm sm:text-base shadow-md hover:shadow-lg cursor-pointer transition-all flex items-center gap-1.5"
+                  style="right: 12px; top: 50%; transform: translateY(-50%);">
+            <span id="no-text">No 🙈</span>
+          </button>
+
+        </div>
+
+        <p id="hint-text" class="text-xs text-romantic-400 mt-2 text-center font-light italic">
+          Elige con el corazón... (o el que logres atrapar 😉)
+        </p>
+
+      </section>
+
+    </article>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-500/80 pb-6 flex items-center justify-center gap-1.5">
+      <span>Hecho con todo mi amor para vos</span>
+      <span class="text-romantic-500 animate-heartbeat">❤️</span>
+    </footer>
+
+  </main>
+
+  <!-- MODAL DE CELEBRACIÓN / ÉXITO -->
+  <div id="celebration-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-500 p-4">
+    <div id="celebration-card" class="bg-gradient-to-b from-white via-pink-50 to-rose-100 border border-pink-200 rounded-3xl max-w-lg w-full p-7 sm:p-10 text-center shadow-2xl transform scale-90 transition-transform duration-500 relative overflow-hidden">
+      
+      <!-- Decorative circles -->
+      <div class="absolute -top-12 -right-12 w-44 h-44 bg-pink-300/30 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -bottom-12 -left-12 w-44 h-44 bg-rose-400/30 rounded-full blur-2xl pointer-events-none"></div>
+
+      <!-- Icon Animation -->
+      <div class="relative mx-auto w-24 h-24 mb-5 flex items-center justify-center">
+        <div class="absolute inset-0 bg-romantic-400/20 rounded-full animate-ping"></div>
+        <div class="w-20 h-20 bg-gradient-to-tr from-romantic-600 to-romantic-400 rounded-full flex items-center justify-center shadow-lg text-white text-4xl animate-heartbeat">
+          ❤️
+        </div>
+      </div>
+
+      <!-- Modal Content -->
+      <h3 class="font-playfair text-2xl sm:text-3xl md:text-4xl font-extrabold text-romantic-700 mb-2">
+        ¡Sabía que dirías que sí! 🥰✨
+      </h3>
+
+      <div class="h-1 w-20 bg-romantic-400 rounded-full mx-auto mb-4"></div>
+
+      <p class="text-romantic-800 text-lg sm:text-xl font-semibold leading-relaxed mb-3">
+        Mi corazón es oficialmente tuyo. ❤️
+      </p>
+
+      <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 font-normal">
+        Gracias por hacerme el más feliz del mundo. Te prometo cuidarte, hacerte reír todos los días y construir juntos momentos inolvidables. 🌹🥺
+      </p>
+
+      <!-- Date Badge -->
+      <div class="inline-flex items-center gap-2 bg-white/90 border border-pink-200 px-4 py-2 rounded-2xl shadow-sm text-xs sm:text-sm text-pink-700 font-semibold mb-6">
+        <i class="fa-regular fa-calendar-heart text-romantic-500"></i>
+        <span id="current-date-badge">Hoy comienza nuestra historia</span>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
+        <button onclick="shareWhatsApp()" 
+                class="w-full sm:w-auto px-6 py-3 rounded-full bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <i class="fa-brands fa-whatsapp text-lg"></i>
+          <span>Avisarme por WhatsApp ❤️</span>
+        </button>
+
+        <button onclick="closeModal()" 
+                class="w-full sm:w-auto px-6 py-3 rounded-full bg-white hover:bg-pink-100 active:scale-95 text-pink-700 font-semibold text-sm border border-pink-200 shadow-sm transition-all cursor-pointer">
+          Cerrar con una sonrisa 😊
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    // ==========================================
+    // 1. AMBIENT FLOATING HEARTS CANVAS
+    // ==========================================
+    const canvas = document.getElementById('hearts-canvas');
+    const ctx = canvas.getContext('2d');
+    let hearts = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class FloatingHeart {
+      constructor() {
+        this.reset(true);
+      }
+      reset(initial = false) {
+        this.x = Math.random() * canvas.width;
+        this.y = initial ? Math.random() * canvas.height : canvas.height + 25;
+        this.size = Math.random() * 14 + 10;
+        this.speedY = Math.random() * 1.1 + 0.45;
+        this.speedX = (Math.random() - 0.5) * 0.7;
+        this.opacity = Math.random() * 0.4 + 0.2;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 0.02;
+        const colors = [
+          'rgba(255, 77, 109, ',
+          'rgba(255, 117, 143, ',
+          'rgba(201, 24, 74, ',
+          'rgba(255, 179, 193, ',
+          'rgba(212, 175, 55, '
+        ];
+        this.colorBase = colors[Math.floor(Math.random() * colors.length)];
+      }
+      update() {
+        this.y -= this.speedY;
+        this.x += Math.sin(this.y / 40) * this.speedX;
+        this.rotation += this.rotSpeed;
+        if (this.y < -30 || this.x < -30 || this.x > canvas.width + 30) {
+          this.reset(false);
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.fillStyle = this.colorBase + this.opacity + ')';
+        ctx.beginPath();
+        const topCurveHeight = this.size * 0.3;
+        ctx.moveTo(0, topCurveHeight);
+        ctx.bezierCurveTo(
+          -this.size / 2, -topCurveHeight,
+          -this.size, this.size / 3,
+          0, this.size
+        );
+        ctx.bezierCurveTo(
+          this.size, this.size / 3,
+          this.size / 2, -topCurveHeight,
+          0, topCurveHeight
+        );
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    const heartCount = window.innerWidth < 640 ? 24 : 42;
+    for (let i = 0; i < heartCount; i++) {
+      hearts.push(new FloatingHeart());
+    }
+
+    function animateHearts() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hearts.forEach(h => {
+        h.update();
+        h.draw();
+      });
+      requestAnimationFrame(animateHearts);
+    }
+    animateHearts();
+
+    // ==========================================
+    // 2. ROMANTIC MUSIC CONTROLLER & SYNTHESIZER
+    // ==========================================
+    // Fallback Web Audio API Music Box (guaranteed offline romantic chime)
+    let audioCtx = null;
+    let isSynthPlaying = false;
+    let synthTimeout = null;
+    let synthIndex = 0;
+
+    // Romantic music box notes & durations (in seconds)
+    const melodyNotes = [
+      { f: 523.25, d: 0.6 }, // C5
+      { f: 659.25, d: 0.6 }, // E5
+      { f: 783.99, d: 0.8 }, // G5
+      { f: 659.25, d: 0.6 }, // E5
+      { f: 587.33, d: 0.6 }, // D5
+      { f: 698.46, d: 0.6 }, // F5
+      { f: 880.00, d: 0.8 }, // A5
+      { f: 698.46, d: 0.6 }, // F5
+      { f: 523.25, d: 0.6 }, // C5
+      { f: 659.25, d: 0.6 }, // E5
+      { f: 1046.50, d: 1.0 }, // C6
+      { f: 987.77, d: 0.6 }, // B5
+      { f: 880.00, d: 0.8 }, // A5
+      { f: 783.99, d: 1.2 }, // G5
+    ];
+
+    function playSynthNote(freq, dur) {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+      gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.15, audioCtx.currentTime + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur * 1.5);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + dur * 1.6);
+    }
+
+    function synthLoop() {
+      if (!isSynthPlaying) return;
+      const note = melodyNotes[synthIndex];
+      playSynthNote(note.f, note.d);
+      synthIndex = (synthIndex + 1) % melodyNotes.length;
+      synthTimeout = setTimeout(synthLoop, note.d * 1000);
+    }
+
+    const bgAudio = document.getElementById('bg-audio');
+    const musicBtn = document.getElementById('music-toggle-btn');
+    const musicIcon = document.getElementById('music-icon');
+    let isMusicActive = false;
+
+    function startMusic() {
+      isMusicActive = true;
+      musicIcon.className = 'fa-solid fa-pause text-xs';
+      musicBtn.classList.add('border-pink-500', 'bg-pink-50');
+
+      // Attempt playing audio file if available
+      const playPromise = bgAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // If no custom mp3 or blocked, use romantic synth music box
+          isSynthPlaying = true;
+          synthLoop();
+        });
+      }
+    }
+
+    function pauseMusic() {
+      isMusicActive = false;
+      isSynthPlaying = false;
+      clearTimeout(synthTimeout);
+      bgAudio.pause();
+      musicIcon.className = 'fa-solid fa-play text-xs';
+      musicBtn.classList.remove('border-pink-500', 'bg-pink-50');
+    }
+
+    function toggleAudio() {
+      if (isMusicActive) {
+        pauseMusic();
+      } else {
+        startMusic();
+      }
+    }
+
+    // Auto-start music gently on first touch/click anywhere on page
+    function autoStartAudio() {
+      if (!isMusicActive) {
+        startMusic();
+      }
+      document.removeEventListener('click', autoStartAudio);
+      document.removeEventListener('touchstart', autoStartAudio);
+    }
+    document.addEventListener('click', autoStartAudio, { once: true });
+    document.addEventListener('touchstart', autoStartAudio, { once: true });
+
+    // ==========================================
+    // 3. EVASIVE 'NO' BUTTON & GROWING 'SÍ'
+    // ==========================================
+    const btnNo = document.getElementById('btn-no');
+    const btnYes = document.getElementById('btn-yes');
+    const noText = document.getElementById('no-text');
+
+    const evasivePhrases = [
+      "¿Segura? 🥺",
+      "¡Piénsalo bien! 🤔",
+      "¡Por fis! 🙏",
+      "Opción no válida 😜",
+      "¿Cómo que no? 💔",
+      "¡Ese botón no sirve! 😂",
+      "El destino dice que sí ✨",
+      "¡Inténtalo otra vez! 🏃‍♂️💨",
+      "Error 404: 'No' ❌",
+      "¡Dale al botón rojo! 👉",
+      "¿De verdad me harás esto? 🥺❤️",
+      "¡Casi me atrapas! 💨",
+      "Imposible decir que no 🥰"
+    ];
+
+    let phraseIndex = 0;
+    let dodgeCount = 0;
+    let yesScale = 1;
+
+    function moveNoButton(event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      dodgeCount++;
+
+      // Change phrase playfully
+      phraseIndex = (phraseIndex + 1) % evasivePhrases.length;
+      noText.textContent = evasivePhrases[phraseIndex];
+
+      // Grow the 'Sí' button dynamically
+      yesScale += 0.08;
+      if (yesScale > 1.7) yesScale = 1.7;
+      btnYes.style.transform = `scale(${yesScale})`;
+
+      // Dynamic calculation for safe escape within viewport
+      const btnWidth = btnNo.offsetWidth || 110;
+      const btnHeight = btnNo.offsetHeight || 44;
+      const padding = 20;
+
+      const maxX = window.innerWidth - btnWidth - padding;
+      const maxY = window.innerHeight - btnHeight - padding;
+      const minY = padding + 60; // keep below top header/controls
+
+      const randomX = Math.floor(Math.random() * (maxX - padding + 1)) + padding;
+      const randomY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
+
+      btnNo.style.position = 'fixed';
+      btnNo.style.zIndex = '9999';
+      btnNo.style.left = `${randomX}px`;
+      btnNo.style.top = `${randomY}px`;
+      btnNo.style.transform = `rotate(${(Math.random() - 0.5) * 20}deg)`;
+
+      // Haptic feedback on mobile if supported
+      if (navigator.vibrate) {
+        navigator.vibrate(40);
+      }
+    }
+
+    // Attach event listeners for mouse and touch
+    btnNo.addEventListener('mouseenter', moveNoButton);
+    btnNo.addEventListener('pointerenter', moveNoButton);
+    btnNo.addEventListener('touchstart', moveNoButton, { passive: false });
+    btnNo.addEventListener('click', moveNoButton);
+
+    // Desktop Proximity detection: when cursor gets near 'No', dodge!
+    document.addEventListener('mousemove', (e) => {
+      if (btnNo.style.position !== 'fixed') return;
+      const rect = btnNo.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dist = Math.hypot(e.clientX - centerX, e.clientY - centerY);
+
+      // If within 65px radius, flee!
+      if (dist < 65) {
+        moveNoButton();
+      }
+    });
+
+    // ==========================================
+    // 4. CELEBRATION WHEN '¡SÍ!' IS CLICKED
+    // ==========================================
+    function celebrateAcceptance() {
+      // 1. Confetti cannon explosions
+      const duration = 6 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
+
+      function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+        const particleCount = 50 * (timeLeft / duration);
+
+        confetti(Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+          colors: ['#ff4d6d', '#c9184a', '#ffccd5', '#ffd700', '#ffffff']
+        }));
+        confetti(Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+          colors: ['#ff4d6d', '#c9184a', '#ffccd5', '#ffd700', '#ffffff']
+        }));
+      }, 250);
+
+      // Heart confetti burst
+      if (typeof confetti.shapeFromText === 'function') {
+        const heartShape = confetti.shapeFromText({ text: '❤️' });
+        confetti({
+          shapes: [heartShape],
+          scalar: 2.2,
+          particleCount: 40,
+          spread: 120,
+          origin: { y: 0.6 },
+          zIndex: 10000
+        });
+      }
+
+      // 2. Ensure music is playing
+      if (!isMusicActive) {
+        startMusic();
+      }
+
+      // 3. Format Date Badge
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const today = new Date().toLocaleDateString('es-ES', options);
+      const formattedDate = today.charAt(0).toUpperCase() + today.slice(1);
+      document.getElementById('current-date-badge').innerHTML = `✨ ${formattedDate} — Nuestro Día ✨`;
+
+      // 4. Show modal
+      const modal = document.getElementById('celebration-modal');
+      const card = document.getElementById('celebration-card');
+      modal.classList.remove('pointer-events-none');
+      modal.classList.add('opacity-100');
+      card.classList.remove('scale-90');
+      card.classList.add('scale-100');
+
+      if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 100, 50, 200]);
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('celebration-modal');
+      const card = document.getElementById('celebration-card');
+      modal.classList.add('pointer-events-none');
+      modal.classList.remove('opacity-100');
+      card.classList.add('scale-90');
+      card.classList.remove('scale-100');
+    }
+
+    function shareWhatsApp() {
+      const text = encodeURIComponent("¡Dije que SÍ! 🥰💍❤️ Oficialmente somos novios. Te amo mucho.");
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    // ==========================================
+    // 5. PHOTO UPLOAD & AUTO-DETECTION
+    // ==========================================
+    function handlePhotoUpload(event) {
+      const input = event.target;
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('special-photo');
+          img.src = e.target.result;
+          
+          confetti({
+            particleCount: 30,
+            spread: 60,
+            origin: { y: 0.5 },
+            colors: ['#ff758f', '#ffb3c1', '#ffffff']
+          });
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // Auto-detect if user dropped 'foto.jpg' or 'foto.png' in folder
+    function autoDetectLocalPhoto() {
+      const checkImg = new Image();
+      checkImg.onload = function() {
+        document.getElementById('special-photo').src = this.src;
+      };
+      checkImg.src = 'foto.jpg';
+    }
+    autoDetectLocalPhoto();
+
+    // ==========================================
+    // 6. FAIRY DUST / SPARKLE CURSOR TRAIL
+    // ==========================================
+    let lastSparkleTime = 0;
+    function createSparkle(x, y) {
+      const now = Date.now();
+      if (now - lastSparkleTime < 50) return; // throttle
+      lastSparkleTime = now;
+
+      const sparkle = document.createElement('div');
+      sparkle.className = 'cursor-sparkle';
+      sparkle.style.left = `${x}px`;
+      sparkle.style.top = `${y}px`;
+      const emojis = ['✨', '💖', '🌸', '❤️'];
+      sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      sparkle.style.fontSize = `${Math.floor(Math.random() * 10 + 10)}px`;
+      document.body.appendChild(sparkle);
+
+      setTimeout(() => {
+        sparkle.remove();
+      }, 700);
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      createSparkle(e.clientX, e.clientY);
+    });
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches[0]) {
+        createSparkle(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+  </script>
+</body>
+</html>
