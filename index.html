@@ -297,16 +297,17 @@
           <div class="polaroid-frame p-3.5 pb-6 rounded-2xl bg-white rotate-[-1.5deg] border border-pink-100 flex flex-col items-center">
             
             <!-- Photo Frame -->
-            <div class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-xl overflow-hidden bg-pink-50 shadow-inner flex items-center justify-center">
+            <div class="relative w-72 h-72 sm:w-80 sm:h-80 rounded-xl overflow-hidden bg-pink-50 shadow-inner flex items-center justify-center">
               <img id="special-photo" 
-                   src="foto-placeholder.svg" 
+                   src="foto.jpg" 
+                   onerror="this.src='foto-placeholder.svg'"
                    alt="Nosotros dos ❤️" 
-                   class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                   class="w-full h-full object-cover object-[center_20%] transition-transform duration-700 group-hover:scale-105">
 
-              <!-- Photo change overlay hint on hover -->
-              <div class="absolute inset-0 bg-romantic-900/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white text-sm font-medium">
-                <i class="fa-solid fa-camera-retro text-2xl mb-1 text-white drop-shadow"></i>
-                <span class="drop-shadow">Toca para poner nuestra foto</span>
+              <!-- Discreet camera badge in bottom corner -->
+              <div class="absolute bottom-2.5 right-2.5 bg-black/40 hover:bg-black/60 backdrop-blur-md text-white text-[11px] px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 shadow">
+                <i class="fa-solid fa-camera"></i>
+                <span>Cambiar</span>
               </div>
             </div>
 
